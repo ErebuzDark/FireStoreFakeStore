@@ -15,9 +15,6 @@ import { CiDiscount1 } from "react-icons/ci";
 import { API } from '@config/apiConfig';
 import { fetchProducts } from '@services/fetchProducts';
 
-// hooks
-import useDebounce from '@hooks/useDebounce';
-
 // data
 import { CATEGORIES } from '@data/productCatergories';
 
@@ -31,24 +28,13 @@ const Home = () => {
   const [searchText, setSearchText] = useState('');
   const [searchKey, setSearchKey] = useState("title");
   const [searchProduct, setSearchProduct] = useState([])
-  const debouncedSearch = useDebounce(searchText, 1000);
-  
-  useEffect(() => {
-    if (!debouncedSearch) {
-      setSearchProduct([]);
-      return;
-    }
-    setLoading(true); 
-    const timeout = setTimeout(() => {
-      const results = products.filter((product) =>
-        product[searchKey].toLowerCase().includes(debouncedSearch.toLowerCase())
-      );
-      setSearchProduct(results);
-      setLoading(false); 
-    }, 1000);
-  
-      clearTimeout(timeout);
-  }, [debouncedSearch, products, searchKey]);
+
+  const handleSearch = (e) => {
+    const results = products.filter((product) =>
+      product[searchKey].toLowerCase().includes(e.toLowerCase())
+    );
+    setSearchProduct(results);
+  }
   
   // view Details
   const handleViewDetails = (prodID) => {
@@ -67,7 +53,6 @@ const Home = () => {
       } catch (error) {
         console.log(error);
       }
-      
     };
     getProducts();
   }, [searchText]);
@@ -77,8 +62,8 @@ const Home = () => {
   return (
     <>
       <div className='flex gap-2 w-full p-3 md:p-10'>
-        <TextInput onChange={(e) => {setSearchText(e.target.value), setSearchKey('title')}} className='w-full' id="input-gray" placeholder="Search Item" required color="gray" />
-        <Select onChange={(e) => {setSearchText(e.target.value), setSearchKey('category')}} className='w-96' id="countries" required>
+        <TextInput onChange={(e) => {handleSearch(e.target.value), setSearchKey('title')}} className='w-full' id="input-gray" placeholder="Search Item" required color="gray" />
+        <Select onChange={(e) => {handleSearch(e.target.value), setSearchKey('category')}} className='w-96' id="countries" required>
           {CATEGORIES.map((category, index) => (
             <option key={index} value={category}>{category}</option>
           ))}

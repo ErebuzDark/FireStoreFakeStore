@@ -20,6 +20,7 @@ const Cart = () => {
   const [cartItems, setCartItems] = useState([]);
 
   const [selectedProducts, setSelectedProducts] = useState([]);
+  const [totalSelected, setTotalSelected] = useState(0);
 
   useEffect(() => {
     const fetchCart = async () => {
@@ -44,14 +45,24 @@ const Cart = () => {
 
       if (isSelected) {
         newSelectedProducts = prevSelected.filter(item => item.uniqueID !== uniqueID);
+        setTotalSelected(newSelectedProducts.length);
       } else {
         newSelectedProducts = [...prevSelected, { uniqueID, price, quantity }];
+        setTotalSelected(newSelectedProducts.length);
       }
       const newTotalPrice = newSelectedProducts.reduce((total, item) => {
         return total + (item.price * item.quantity);
       }, 0);
       setTotalAmount(newTotalPrice.toFixed(2));
 
+      return newSelectedProducts;
+    });
+  };
+
+  const handleRemoveItem = (uniqueID) => {
+    setSelectedProducts((prevSelected) => {
+      const newSelectedProducts = prevSelected.filter(item => item.uniqueID !== uniqueID);
+      setTotalSelected(newSelectedProducts.length);
       return newSelectedProducts;
     });
   };
@@ -80,18 +91,18 @@ const Cart = () => {
                       <div>
                         <p className="font-medium">{product.title}</p>
                         <p>Price: ${product.price}</p>
-                        <small>Quantity: {product.quantity}</small>
+                        <small className="text-slate-500">Quantity</small>
                       </div>
                       <div className="flex gap-2 items-center">
                         <Button color="common" size="xs" icon={<IoIosRemove />} onClick={() => console.log("downs")} />
-                        <div className="w-14 border-[0.1px] border-slate-400 bg-white px-3 py-1 rounded-md text-center">{0}</div>
+                        <div className="w-14 border-[0.1px] border-slate-400 bg-white px-3 py-1 rounded-md text-center">{product.quantity}</div>
                         <Button color="common" size="xs" icon={<IoAddSharp />} onClick={() => console.log("ups")} />
                       </div>
                     </div>
                   </div>
                 </div>
                 <div className="p-3">
-                  <Button color="red" size="small" icon={<CiCircleRemove />} onClick={() => console.log("Remove item")}>  
+                  <Button color="red" size="small" icon={<CiCircleRemove />} onClick={() => handleRemoveItem(product.uniqueID)}>  
                     Remove
                   </Button>
                 </div>
@@ -102,12 +113,20 @@ const Cart = () => {
       </div>
 
       {/* below bar para sa total amount */}
-      <div className="fixed bottom-0 right-13 bg-white p-4 shadow-2xl border-t-[4px] border-l-[0.2px] border-r-[0.2px] border-amber-950 rounded-tl-2xl rounded-tr-2xl flex justify-between gap-6 items-center">
-        <h3 className="w-full text-end text-3xl text-amber-950 font-semibold">Total: ${totalAmount}</h3>
-        <Button className="w-1/2" color="common" icon={<IoBagCheckOutline />} size="large">
-          Checkout
-        </Button>
-      </div>
+      {
+        totalAmount > 0 && (
+          <div className="fixed bottom-0 right-13 bg-white p-4 shadow-2xl border-t-[4px] border-l-[0.2px] border-r-[0.2px] border-amber-950 rounded-tl-2xl rounded-tr-2xl flex flex-col justify-between items-start">
+            <p>Selected items: {totalSelected}</p>
+            <div className="flex gap-4 items-center">
+              <h3 className="w-full text-end text-3xl text-amber-950 font-semibold">Total: ${totalAmount}</h3>
+              <Button className="w-1/2" color="common" icon={<IoBagCheckOutline />} size="large">
+                Checkout
+              </Button>
+            </div>
+            
+          </div>
+        )
+      }
     </>
   );
 };
