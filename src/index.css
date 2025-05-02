@@ -9,3 +9,16 @@ hr {
   color: rgb(206, 209, 213);
   margin-inline: 24px;
 }
+
+.product-img {
+  animation: zoom 0.5s ease-in-out;
+}
+
+@keyframes zoom {
+  0% {
+    transform: scale(0.8);
+  }
+  100% {
+    transform: scale(1);
+  }
+}

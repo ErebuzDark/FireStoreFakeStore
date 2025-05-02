@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useContext } from 'react';
+import { useLocation, useNavigate } from 'react-router-dom';
 
 // components
 import ProductCard from '@components/Card/ProductCard';
@@ -6,7 +7,7 @@ import SkeletonProdCard from '@components/Card/SkeletonProdCard';
 import Button from '@components/Buttons/Button'
 
 // libraries
-import {Modal, ModalBody, ModalFooter, ModalHeader, Select, TextInput} from 'flowbite-react';
+import {Dropdown, DropdownItem, Modal, ModalBody, ModalFooter, ModalHeader, Select, TextInput} from 'flowbite-react';
 import { IoBagCheckOutline } from "react-icons/io5";
 import { BsCartPlus } from "react-icons/bs";
 import { CiDiscount1 } from "react-icons/ci";
@@ -19,6 +20,13 @@ import { fetchProducts } from '@services/fetchProducts';
 import { CATEGORIES } from '@data/productCatergories';
 
 const Home = () => {
+  // open natin modal kung present yung location para view details coming from cart
+  const navigate = useNavigate();
+  const { search } = useLocation();
+  const queryParams = new URLSearchParams(search);
+  let absoluteOpenModal = queryParams.get('viewProduct');
+  let absoluteProductID = queryParams.get('productId');
+
   const [loading, setLoading] = useState(false);
   const [products, setProducts] = useState([]);
   const [isViewProDuctDetailsVisible, setIsViewProDuctDetailsVisible] = useState(false);
@@ -34,12 +42,6 @@ const Home = () => {
       product[searchKey].toLowerCase().includes(e.toLowerCase())
     );
     setSearchProduct(results);
-  }
-  
-  // view Details
-  const handleViewDetails = (prodID) => {
-    setSelectedProduct(products.find(product => product.id === prodID));
-    setIsViewProDuctDetailsVisible(!isViewProDuctDetailsVisible);
   }
 
   // fetch products
@@ -57,6 +59,31 @@ const Home = () => {
     getProducts();
   }, [searchText]);
 
+  // view Details
+  const handleViewDetails = (prodID) => {
+    setSelectedProduct(products.find(product => product.id === prodID));
+    setIsViewProDuctDetailsVisible(!isViewProDuctDetailsVisible);
+    // dito remove yung query params sa url pag nag close ng modal hirap pota...
+    const queryParams = new URLSearchParams(search);
+    queryParams.delete('viewProduct');
+    queryParams.delete('productId');
+    
+    // navigate to the same page without query params replace true means di na mag add sa history stack
+    // so pag nag back button di na mag rerender yung page na kung saan mag show ulit yung modal
+    navigate(`/?${queryParams.toString()}`, { replace: true });
+  }
+
+  useEffect(() => {
+    if (absoluteOpenModal === 'true' && absoluteProductID && products.length > 0) {
+      const foundProduct = products.find(product => product.id === Number(absoluteProductID));
+      if (foundProduct) {
+        setSelectedProduct(foundProduct);
+        setIsViewProDuctDetailsVisible(true);
+      }
+    }
+  }, [absoluteOpenModal, absoluteProductID, products]);
+  
+
   const dataToRender = searchProduct.length > 0 ? searchProduct : products;
     
   return (
@@ -68,6 +95,14 @@ const Home = () => {
             <option key={index} value={category}>{category}</option>
           ))}
         </Select>
+        <Dropdown label="Sort By" color="light" className='w-40'>
+          <DropdownItem onClick={() => {handleSearch('asc'), setSearchKey('price')}}>Price: Low to High</DropdownItem>
+          <DropdownItem onClick={() => {handleSearch('desc'), setSearchKey('price')}}>Price: High to Low</DropdownItem>
+          <DropdownItem onClick={() => {handleSearch('asc'), setSearchKey('rating')}}>Rating: Low to High</DropdownItem>
+          <DropdownItem onClick={() => {handleSearch('desc'), setSearchKey('rating')}}>Rating: High to Low</DropdownItem>
+          <DropdownItem onClick={() => {handleSearch('asc'), setSearchKey('title')}}>Title: A to Z</DropdownItem>
+          <DropdownItem onClick={() => {handleSearch('desc'), setSearchKey('title')}}>Title: Z to A</DropdownItem>
+        </Dropdown>
       </div>
       
       <div className='grid grid-cols-1 lg:grid-cols-2 gap-3 p-3 md:p-10 place-items-center'>
@@ -82,14 +117,14 @@ const Home = () => {
           />
         ))
       }
-
       </div>
+      
       {/* // -------------------------- MODAL -------------------------- */}
       <Modal size='3xl' show={isViewProDuctDetailsVisible} dismissible onClose={() => handleViewDetails(null)}>
         <ModalHeader>Product Details</ModalHeader>
         <ModalBody>
           <div className="space-y-6">
-            <img src={selectedProduct?.image} alt="" className='w-1/3 mx-auto my-8' />
+            <img src={selectedProduct?.image} alt="" className='product-img w-1/3 mx-auto my-8' />
             <div>
               <h2 className='text-2xl font-medium'>{selectedProduct?.title}</h2>
               <small className='text-base text-slate-500'>{selectedProduct?.category}</small>
@@ -109,7 +144,10 @@ const Home = () => {
         <ModalFooter className='flex flex-row justify-end'>
           <Button color='yellow' icon={<BsCartPlus />} >Add to Cart</Button>
           <Button color="amberDark" icon={<IoBagCheckOutline />}>
-            But Now
+            Buy Now
+          </Button>
+          <Button color="amberDark" icon={<IoBagCheckOutline />}>
+            Maybe Later
           </Button>
         </ModalFooter>
       </Modal>
