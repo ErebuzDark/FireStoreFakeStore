@@ -2,13 +2,15 @@ import { Routes, Route, Link } from 'react-router-dom';
 
 import Layout from '@layout/Layout';
 
+import LoginPage from '@features/auth/LoginPage';
+
 import Home from '@pages/Home/Home';
 import Cart from '@pages/Cart/Cart';
 // import NotFound from './pages/NotFound';
 
 function App() {
   return (
-    <div className='bg-slate-50'>
+    <div className='size-full h-[100vh] bg-slate-50'>
       {/* <nav>
         <Link to="/">Home</Link> |{" "}
         <Link to="/about">About</Link> |{" "}
@@ -18,6 +20,12 @@ function App() {
       <Routes>
         <Route
           path="/"
+          element={
+            <LoginPage />
+          } 
+        />
+        <Route
+          path="/home"
           element={
             <Layout>
               <Home />

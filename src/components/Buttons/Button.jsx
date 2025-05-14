@@ -1,7 +1,7 @@
 import React from 'react';
 
-const Button = ({ children, color = "hell", size = "medium", icon = null, disabled = false, onClick }) => {
-  const baseStyles = `flex h-fit px-4 py-2 items-center font-semibold rounded-lg focus:outline-none`;
+const Button = ({ children, color = "hell", size = "medium", icon = null, disabled = false, onClick, type }) => {
+  const baseStyles = `flex h-fit px-4 py-2 justify-center items-center font-semibold rounded-lg focus:outline-none`;
 
   const colorClasses = {
     common: "bg-white border border-slate-300 hover:bg-slate-100 text-slate-700",
@@ -24,6 +24,7 @@ const Button = ({ children, color = "hell", size = "medium", icon = null, disabl
       className={`${baseStyles} ${colorClasses[color]} ${sizeClasses[size]} ${disabled ? "opacity-50 cursor-not-allowed" : ""} ${icon ? 'gap-2' : '' }`}
       onClick={onClick}
       disabled={disabled}
+      type={type}
     >
       <p className='text-xl'>{icon}</p>
       {children}
