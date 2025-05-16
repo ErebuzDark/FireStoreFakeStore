@@ -6,17 +6,14 @@ import LoginPage from '@features/auth/LoginPage';
 
 import Home from '@pages/Home/Home';
 import Cart from '@pages/Cart/Cart';
+
+import Toaster from '@components/Toaster/Toaster';
 // import NotFound from './pages/NotFound';
 
 function App() {
   return (
     <div className='size-full h-[100vh] bg-slate-50'>
-      {/* <nav>
-        <Link to="/">Home</Link> |{" "}
-        <Link to="/about">About</Link> |{" "}
-        <Link to="/contact">Contact</Link>
-      </nav> */}
-
+      <Toaster />
       <Routes>
         <Route
           path="/"

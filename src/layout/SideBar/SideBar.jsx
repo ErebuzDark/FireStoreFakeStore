@@ -1,4 +1,5 @@
 import React, { useContext, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import { useLocation } from "react-router-dom";
 import { Context } from "@contexts/ContextProvider";
 import {
@@ -25,6 +26,7 @@ import { getCartsItem } from "@services/cartService";
 import { API } from "@config/apiConfig";
 
 const SideBar = () => {
+  const navigate = useNavigate();
   const { cartCount, setCartCount } = useContext(Context);
   const location = useLocation();
   const currentPath = location.pathname;
@@ -37,6 +39,11 @@ const SideBar = () => {
 
     fetchCart();
   }, []);
+
+  const handleSignOut = () => {
+    localStorage.removeItem('token');
+    navigate('/');
+  }
 
   return (
     <div className="hidden md:block w-72 min-h-[calc(100vh-103px)] bg-white shadow">
@@ -57,7 +64,7 @@ const SideBar = () => {
               Cart
             </SidebarItem>
 
-            <SidebarItem href="#" icon={CiLogout}>
+            <SidebarItem href="#" icon={CiLogout} onClick={handleSignOut}>
               Sign Out
             </SidebarItem>
           </SidebarItemGroup>

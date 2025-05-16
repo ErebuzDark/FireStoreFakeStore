@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useContext } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { Context } from "@contexts/ContextProvider";
 
 // icons
@@ -16,6 +16,7 @@ import Button from "@components/Buttons/Button";
 import Checkbox from "@components/Checkboxes/Checkbox";
 
 const Cart = () => {
+  const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
   const [totalAmount, setTotalAmount] = useState(0);
   const [cartItems, setCartItems] = useState([]);
@@ -162,7 +163,8 @@ const Cart = () => {
     ) {
       return;
     }
-    window.location.href = `/?viewProduct=true&productId=${productId}`;
+    navigate(`/home/?viewProduct=true&productId=${productId}`)
+    // window.location.href = `/?viewProduct=true&productId=${productId}`;
   };
 
   return (

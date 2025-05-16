@@ -77,13 +77,18 @@ const Home = () => {
   }, [absoluteOpenModal, absoluteProductID, products]);
 
   const handleViewDetails = (prodID) => {
-    setSelectedProduct(products.find((product) => product.id === prodID));
-    setIsViewProDuctDetailsVisible(!isViewProDuctDetailsVisible);
+    if (prodID) {
+      setSelectedProduct(products.find((product) => product.id === prodID));
+      setIsViewProDuctDetailsVisible(true);
+    } else {
+      setSelectedProduct(null);
+      setIsViewProDuctDetailsVisible(false);
 
-    const queryParams = new URLSearchParams(search);
-    queryParams.delete("viewProduct");
-    queryParams.delete("productId");
-    navigate(`/?${queryParams.toString()}`, { replace: true });
+      const queryParams = new URLSearchParams(search);
+      queryParams.delete("viewProduct");
+      queryParams.delete("productId");
+    }
+    navigate(`${window.location.pathname}?${queryParams.toString()}`, { replace: true });
   };
 
   const dataToRender = useMemo(() => {
@@ -110,22 +115,6 @@ const Home = () => {
     setSortKey(key);
     setSortOrder(order);
   };
-
-  const formData = {
-    firstName: '',
-    lastName: '',
-    age: 0,
-    email: '',
-  };
-
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    formData[name] = value;
-  }
-
-  const handleSubmit = () => {
-    console.log(formData);
-  }
 
   return (
     <>
@@ -252,7 +241,7 @@ const Home = () => {
           </Button>
         </ModalFooter>
       </Modal>
-      <Modal show={null} size="lg" dismissible>
+      {/* <Modal show={null} size="lg" dismissible>
         <ModalHeader></ModalHeader>
         <ModalBody>
           <form className="flex flex-col gap-2">
@@ -265,7 +254,7 @@ const Home = () => {
         <ModalFooter>
           <Button color="amberDark" type='submit' onClick={handleSubmit}>Submit</Button>
         </ModalFooter>
-      </Modal>
+      </Modal> */}
     </>
   );
 };

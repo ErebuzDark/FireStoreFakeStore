@@ -1,12 +1,18 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+import { fetchAuthUser } from "@services/authLogin";
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import * as Yup from "yup";
+
+// Libraries
 import { TextInput, HelperText } from "flowbite-react";
 import Button from "@components/Buttons/Button";
+import { AiOutlineLoading3Quarters } from "react-icons/ai";
+import { toast } from "react-toastify";
 
 const validationSchema = Yup.object({
   username: Yup.string()
-    .min(6, "Username must be at least 6 characters")
+    .min(3, "Username must be at least 6 characters")
     .max(20, "Username must be at most 20 characters")
     .required("Username is required"),
   password: Yup.string()
@@ -15,14 +21,43 @@ const validationSchema = Yup.object({
 });
 
 const LoginForm = () => {
+  const navigate = useNavigate();
+  const [isLoading, setIsLoading] = useState(false);
   const initialValues = {
     username: "",
     password: "",
-    sample: "",
   };
 
-  const handleSubmit = (values) => {
-    console.log("Form submitted", values);
+  useEffect(() => {
+    const isLoggedIn = localStorage.getItem("token");
+    if (isLoggedIn) {
+      navigate("/home");
+    }
+  }, []);
+
+  const handleSubmit = async (values) => {
+    setIsLoading(true);
+    try {
+      const response = await fetchAuthUser({
+        user: values.username,
+        pass: values.password,
+      });
+      if (response.error) {
+        if (response.status === 401) {
+          toast.error(response.message);
+        } else {
+          toast.error("An error occurred. Please try again.");
+        }
+      } else {
+        localStorage.setItem("username", values.username);
+        localStorage.setItem("token", response.token);
+        navigate("/home");
+      }
+    } catch (error) {
+      console.log(error.status);
+      toast.error("An unexpected error occurred");
+    }
+    setIsLoading(false);
   };
 
   return (
@@ -63,13 +98,20 @@ const LoginForm = () => {
               className="text-xs text-red-500 -mt-2 mb-2"
             />
 
-            <Button color="amberDark" type="submit" className="w-full mt-2">
-              Login
+            <Button color="amberDark" type="submit" className="w-full mt-2" disabled={isLoading}>
+              {isLoading ? (
+                <AiOutlineLoading3Quarters className="animate-spin" />
+              ) : (
+                "Login"
+              )}
             </Button>
 
             <p className="text-xs text-gray-500 mt-2">
-              Don't have an account?{' '}
-              <a href="#" className="text-blue-500 hover:underline hover:text-amber-700 hover:font-medium">
+              Don't have an account?{" "}
+              <a
+                href="#"
+                className="text-blue-500 hover:underline hover:text-amber-700 hover:font-medium"
+              >
                 Sign up
               </a>
             </p>
