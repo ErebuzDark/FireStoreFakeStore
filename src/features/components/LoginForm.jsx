@@ -36,35 +36,37 @@ const LoginForm = () => {
     }
   }, []);
 
+  const storeUserData = (isRemember, userInfo, token) => {
+    const storage = isRemember ? localStorage : sessionStorage;
+    storage.setItem("userInfo", JSON.stringify(userInfo))
+    storage.setItem("token", token);
+  };
+
   const handleSubmit = async (values) => {
     setIsLoading(true);
+
     try {
       const response = await fetchAuthUser({
         user: values.username,
         pass: values.password,
       });
+
       if (response.error) {
-        if (response.status === 401) {
-          toast.error(response.message);
-        } else {
-          toast.error("An error occurred. Please try again.");
-        }
+        const errorMessage =
+          response.status === 401
+            ? response.message
+            : "An error occurred. Please try again.";
+        toast.error(errorMessage);
       } else {
-        if (isRemember) {
-          console.log(isRemember);
-          localStorage.setItem("username", values.username);
-          localStorage.setItem("token", response.token);
-        } else {
-          sessionStorage.setItem("username", values.username);
-          sessionStorage.setItem("token", response.token);
-        }
+        storeUserData(isRemember, response.data.user, response.data.token);
         navigate("/home");
       }
     } catch (error) {
-      console.log(error.status);
+      console.error("Login error:", error);
       toast.error("An unexpected error occurred");
+    } finally {
+      setIsLoading(false);
     }
-    setIsLoading(false);
   };
 
   return (
@@ -105,13 +107,25 @@ const LoginForm = () => {
               className="text-xs text-red-500 -mt-2 mb-2"
             />
             <div className="flex items-center gap-2">
-              <Checkbox onChange={() => setIsRemember(!isRemember)} id="accept" className="checked:bg-amber-950 focus:ring-0" />
-              <Label htmlFor="accept" className="flex text-xs text-slate-500 font-medium">
+              <Checkbox
+                onChange={() => setIsRemember(!isRemember)}
+                id="accept"
+                className="checked:bg-amber-950 focus:ring-0"
+              />
+              <Label
+                htmlFor="accept"
+                className="flex text-xs text-slate-500 font-medium"
+              >
                 Remember me
               </Label>
             </div>
 
-            <Button color="amberDark" type="submit" className="w-full mt-2" disabled={isLoading}>
+            <Button
+              color="amberDark"
+              type="submit"
+              className="w-full mt-2"
+              disabled={isLoading}
+            >
               {isLoading ? (
                 <AiOutlineLoading3Quarters className="animate-spin" />
               ) : (

@@ -40,7 +40,6 @@ const Home = () => {
     useState(false);
   const [selectedProduct, setSelectedProduct] = useState(null);
 
-  // search & sort states
   const [searchText, setSearchText] = useState("");
   const [searchKey, setSearchKey] = useState("title");
   const [sortKey, setSortKey] = useState("title");

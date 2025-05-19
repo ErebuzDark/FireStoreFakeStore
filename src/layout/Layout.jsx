@@ -8,18 +8,20 @@ const Layout = ({ children }) => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    let isLoggedIn = null;
+    let token = null;
+
     try {
-      isLoggedIn = localStorage.getItem("token");
-    } catch (e) {
-      console.warn("localStorage is not available, checking sessionStorage...");
-      try {
-        isLoggedIn = sessionStorage.getItem("token");
-      } catch (e) {
-        console.warn("sessionStorage is also not available:", e);
+      token = localStorage.getItem("token") || sessionStorage.getItem("token");
+
+      if (!token) {
+        console.warn("User is not authenticated. Redirecting to login...");
+        navigate("/");
       }
+    } catch (e) {
+      console.warn("Error accessing storage:", e);
+      navigate("/");
     }
-  }, []);
+  }, [navigate]);
 
   return (
     <div>

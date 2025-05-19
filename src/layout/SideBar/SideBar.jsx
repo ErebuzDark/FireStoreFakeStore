@@ -42,6 +42,7 @@ const SideBar = () => {
 
   const handleSignOut = () => {
     localStorage.removeItem('token');
+    sessionStorage.removeItem('token');
     navigate('/');
   }
 
