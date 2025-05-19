@@ -1,10 +1,13 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useContext } from "react";
+import { Context } from '@contexts/ContextProvider';
+
 import { useNavigate } from "react-router-dom";
 import Header from "@layout/Header/Header";
 import SideBar from "@layout/SideBar/SideBar";
 import Footer from "@layout/Footer/Footer";
 
 const Layout = ({ children }) => {
+  const { setUserInfo } = useContext(Context);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -12,7 +15,10 @@ const Layout = ({ children }) => {
 
     try {
       token = localStorage.getItem("token") || sessionStorage.getItem("token");
-
+      const userData = JSON.parse(
+        localStorage.getItem("userInfo") || sessionStorage.getItem("userInfo")
+      );
+      if (userData) setUserInfo(userData);
       if (!token) {
         console.warn("User is not authenticated. Redirecting to login...");
         navigate("/");
