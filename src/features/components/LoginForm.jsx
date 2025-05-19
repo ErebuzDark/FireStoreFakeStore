@@ -5,7 +5,7 @@ import { Formik, Form, Field, ErrorMessage } from "formik";
 import * as Yup from "yup";
 
 // Libraries
-import { TextInput, HelperText } from "flowbite-react";
+import { TextInput, Checkbox, Label } from "flowbite-react";
 import Button from "@components/Buttons/Button";
 import { AiOutlineLoading3Quarters } from "react-icons/ai";
 import { toast } from "react-toastify";
@@ -23,6 +23,7 @@ const validationSchema = Yup.object({
 const LoginForm = () => {
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(false);
+  const [isRemember, setIsRemember] = useState(false);
   const initialValues = {
     username: "",
     password: "",
@@ -49,8 +50,14 @@ const LoginForm = () => {
           toast.error("An error occurred. Please try again.");
         }
       } else {
-        localStorage.setItem("username", values.username);
-        localStorage.setItem("token", response.token);
+        if (isRemember) {
+          console.log(isRemember);
+          localStorage.setItem("username", values.username);
+          localStorage.setItem("token", response.token);
+        } else {
+          sessionStorage.setItem("username", values.username);
+          sessionStorage.setItem("token", response.token);
+        }
         navigate("/home");
       }
     } catch (error) {
@@ -97,6 +104,12 @@ const LoginForm = () => {
               component="div"
               className="text-xs text-red-500 -mt-2 mb-2"
             />
+            <div className="flex items-center gap-2">
+              <Checkbox onChange={() => setIsRemember(!isRemember)} id="accept" className="checked:bg-amber-950 focus:ring-0" />
+              <Label htmlFor="accept" className="flex text-xs text-slate-500 font-medium">
+                Remember me
+              </Label>
+            </div>
 
             <Button color="amberDark" type="submit" className="w-full mt-2" disabled={isLoading}>
               {isLoading ? (

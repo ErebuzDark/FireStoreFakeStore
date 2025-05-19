@@ -1,7 +1,7 @@
 import React from 'react';
 
 const Button = ({ children, color = "hell", size = "medium", icon = null, disabled = false, onClick, type }) => {
-  const baseStyles = `flex h-fit px-4 py-2 justify-center items-center font-semibold rounded-lg focus:outline-none`;
+  const baseStyles = `flex h-fit px-4 py-2 justify-center items-center text-nowrap font-semibold rounded-lg focus:outline-none`;
 
   const colorClasses = {
     common: "bg-white border border-slate-300 hover:bg-slate-100 text-slate-700",

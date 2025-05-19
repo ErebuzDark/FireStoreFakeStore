@@ -88,7 +88,9 @@ const Home = () => {
       queryParams.delete("viewProduct");
       queryParams.delete("productId");
     }
-    navigate(`${window.location.pathname}?${queryParams.toString()}`, { replace: true });
+    navigate(`${window.location.pathname}?${queryParams.toString()}`, {
+      replace: true,
+    });
   };
 
   const dataToRender = useMemo(() => {
@@ -231,13 +233,10 @@ const Home = () => {
         </ModalBody>
         <ModalFooter className="flex flex-row justify-end">
           <Button color="yellow" icon={<BsCartPlus />}>
-            Add to Cart
+            <p className="hidden md:block">Add to cart</p>
           </Button>
           <Button color="amberDark" icon={<IoBagCheckOutline />}>
             Buy Now
-          </Button>
-          <Button color="amberDark" icon={<IoBagCheckOutline />}>
-            Maybe Later
           </Button>
         </ModalFooter>
       </Modal>
