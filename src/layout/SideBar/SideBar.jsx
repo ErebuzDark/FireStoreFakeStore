@@ -51,7 +51,7 @@ const SideBar = () => {
       <Sidebar aria-label="Default sidebar example">
         <SidebarItems>
           <SidebarItemGroup>
-            <SidebarItem href="/" icon={CiHome} active={currentPath === "/"}>
+            <SidebarItem href="/home" icon={CiHome} active={currentPath === "/"}>
               Home
             </SidebarItem>
 

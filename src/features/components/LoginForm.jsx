@@ -1,12 +1,13 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { fetchAuthUser } from "@services/authLogin";
-import { Formik, Form, Field, ErrorMessage } from "formik";
+import { Formik, Form,} from "formik";
 import * as Yup from "yup";
 
 // Libraries
-import { TextInput, Checkbox, Label } from "flowbite-react";
+import { Checkbox, Label } from "flowbite-react";
 import Button from "@components/Buttons/Button";
+import FormikTextInput from "@components/TextInput/FormikTextInput";
 import { AiOutlineLoading3Quarters } from "react-icons/ai";
 import { toast } from "react-toastify";
 
@@ -20,7 +21,7 @@ const validationSchema = Yup.object({
     .required("Password is required"),
 });
 
-const LoginForm = () => {
+const LoginForm = ({ setForm }) => {
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(false);
   const [isRemember, setIsRemember] = useState(false);
@@ -38,7 +39,7 @@ const LoginForm = () => {
 
   const storeUserData = (isRemember, userInfo, token) => {
     const storage = isRemember ? localStorage : sessionStorage;
-    storage.setItem("userInfo", JSON.stringify(userInfo))
+    storage.setItem("userInfo", JSON.stringify(userInfo));
     storage.setItem("token", token);
   };
 
@@ -79,70 +80,56 @@ const LoginForm = () => {
         <Form className="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4">
           <h1 className="text-4xl font-bold text-amber-950 mb-5">Login</h1>
 
-          <div className="flex flex-col gap-2">
-            <Field
-              as={TextInput}
-              type="text"
-              name="username"
-              placeholder="Username"
-              maxLength={21}
-              className="border-gray-300 rounded"
-            />
-            <ErrorMessage
-              name="username"
-              component="div"
-              className="text-xs text-red-500 -mt-2 mb-2"
-            />
+          <FormikTextInput
+            name="username"
+            label="Username"
+            placeholder="Username"
+            maxLength={21}
+          />
 
-            <Field
-              as={TextInput}
-              type="password"
-              name="password"
-              placeholder="Password"
-              className="border-gray-300 rounded"
-            />
-            <ErrorMessage
-              name="password"
-              component="div"
-              className="text-xs text-red-500 -mt-2 mb-2"
-            />
-            <div className="flex items-center gap-2">
-              <Checkbox
-                onChange={() => setIsRemember(!isRemember)}
-                id="accept"
-                className="checked:bg-amber-950 focus:ring-0"
-              />
-              <Label
-                htmlFor="accept"
-                className="flex text-xs text-slate-500 font-medium"
-              >
-                Remember me
-              </Label>
-            </div>
+          <FormikTextInput
+            name="password"
+            label="Password"
+            type="password"
+            placeholder="Password"
+          />
 
-            <Button
-              color="amberDark"
-              type="submit"
-              className="w-full mt-2"
-              disabled={isLoading}
+          <div className="flex items-center gap-2 mt-2 mb-2">
+            <Checkbox
+              onChange={() => setIsRemember(!isRemember)}
+              id="accept"
+              className="checked:bg-amber-950 focus:ring-0"
+            />
+            <Label
+              htmlFor="accept"
+              className="flex text-xs text-slate-500 font-medium"
             >
-              {isLoading ? (
-                <AiOutlineLoading3Quarters className="animate-spin" />
-              ) : (
-                "Login"
-              )}
-            </Button>
-
-            <p className="text-xs text-gray-500 mt-2">
-              Don't have an account?{" "}
-              <a
-                href="#"
-                className="text-blue-500 hover:underline hover:text-amber-700 hover:font-medium"
-              >
-                Sign up
-              </a>
-            </p>
+              Remember me
+            </Label>
           </div>
+
+          <Button
+            color="amberDark"
+            type="submit"
+            className="w-full"
+            disabled={isLoading}
+          >
+            {isLoading ? (
+              <AiOutlineLoading3Quarters className="animate-spin" />
+            ) : (
+              "Login"
+            )}
+          </Button>
+
+          <p className="text-xs text-gray-500 mt-2">
+            Don&apos;t have an account?{" "}
+            <a
+              onClick={() => setForm("signup")}
+              className="text-blue-500 hover:underline hover:text-amber-700 hover:font-medium cursor-pointer"
+            >
+              Sign up
+            </a>
+          </p>
         </Form>
       )}
     </Formik>

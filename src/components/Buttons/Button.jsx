@@ -1,6 +1,6 @@
 import React from 'react';
 
-const Button = ({ children, color = "hell", size = "medium", icon = null, disabled = false, onClick, type }) => {
+const Button = ({ children, className, color = "hell", size = "medium", icon = null, disabled = false, onClick, type }) => {
   const baseStyles = `flex h-fit px-4 py-2 justify-center items-center text-nowrap font-semibold rounded-lg focus:outline-none`;
 
   const colorClasses = {
@@ -21,7 +21,7 @@ const Button = ({ children, color = "hell", size = "medium", icon = null, disabl
 
   return (
     <button
-      className={`${baseStyles} ${colorClasses[color]} ${sizeClasses[size]} ${disabled ? "opacity-50 cursor-not-allowed" : ""} ${icon ? 'gap-2' : '' }`}
+      className={`${className} ${baseStyles} ${colorClasses[color]} ${sizeClasses[size]} ${disabled ? "opacity-50 cursor-not-allowed" : ""} ${icon ? 'gap-2' : '' }`}
       onClick={onClick}
       disabled={disabled}
       type={type}
